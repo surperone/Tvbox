@@ -80,10 +80,10 @@ cd utils && wget https://ghproxy.liuzhicong.com/https://raw.githubusercontent.co
 ```
 
 #### 参考地址
-[参考Alanyang1977]https://github.com/alantang1977/X/blob/main/aTV.json
-[参考星夜留痕云盘]https://alist.xingyeliuhen.com/Minio/tvbox/custom/tv.json
-[参考游魂仓库]https://www.iyouhun.com/tv/
-[参考人生如戏]https://ruxi.org/88.html
+[参考Alanyang1977](https://github.com/alantang1977/X/blob/main/aTV.json)
+[参考星夜留痕云盘](https://alist.xingyeliuhen.com/Minio/tvbox/custom/tv.json)
+[参考游魂仓库](https://www.iyouhun.com/tv/)
+[参考人生如戏](https://ruxi.org/88.html)
 [参考T4](https://github.com/sec-an/TV_Spider/blob/main/spider/sp360.py)   
 [golang最好的js引擎-goja](https://github.com/dop251/goja)   
 [安卓最好的js引擎](https://github.com/HarlonWang/quickjs-wrapper)  
