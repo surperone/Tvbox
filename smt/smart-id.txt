@@ -29,7 +29,23 @@ CCTV-11 戏曲频道,id=cctv11
 CCTV-12 社会与法,id=cctv12  
 CCTV-13 新闻频道,id=cctv13  
 CCTV-14 少儿频道,id=cctv14  
-CCTV-15 音乐频道,id=cctv15  
+CCTV-15 音乐频道,id=cctv15 
+湖南卫视,id=hunan_twn 
+浙江卫视,id=zhejiang_twn
+江苏卫视,id=jiangsu_twn
+深圳卫视,id=shenzhen
+福建东南卫视,id=fujian
+广东南方卫视,id=nanfang_twn
+广东卫视,id=guangdongweishi_twn
+北京卫视,id=beijing
+珠江台,id=zhujiang
+广西卫视,id=guangxi
+湖北卫视,id=hubei
+四川卫视,id=sichuan_twn
+东方卫视,id=dongfangweishi_twn
+CGTN,id=CGTN
+凤凰卫视,id=phoenixtv_hd
+凤凰资讯,id=phoenixinfo_hd
 
 体育频道,#genre#  
 Astro Premier League 1,id=go_assp1  
@@ -499,3 +515,36 @@ Skysports EPL,id=tiankongepl
 Skysports Main Event,id=tiankongmain  
 Skysports News,id=tiankongnews  
 Al-Jazeera,id=aljazeera_twn  
+
+越南频道,#genre#
+ANTV,id=viet_antv
+VTV 1,id=viet_vtv1
+VTV 7,id=viet_vtv7
+HTV 7,id=viet_htv7
+HTV 9,id=viet_htv9
+BPTV 2,id=viet_bptv2
+BRT HD,id=viet_brt
+Ca Mau TV,id=viet_camautv
+Danang TV1 HD,id=viet_danangtv1
+Danang TV2 HD,id=viet_danangtv2
+HBTV HD,id=viet_hbtv
+PTTH 1,id=viet_ptth1
+
+韩国频道,#genre#
+Arirang HD,id=arirang_korea
+Yonhap News,id=yonhapnews_korea
+CBS,id=cbs_korea
+EBS 1,id=ebs1_korea
+EBS2,id=ebs2_korea
+EBS Plus2,id=ebsplus2_korea
+SBS Plus,id=sbsplus_korea
+YTN,id=ytn_korea
+KBS World 24,id=kbsworld24_korea
+YTN Science,id=ytnscience_korea
+YTN Korean,id=ytnkorean_korea
+YTN DMB,id=ytndmb_korea
+Apps TV,id=appongoogle_korea
+All the Kpop,id=allthekpop_korea
+J the Kpop,id=jthekpop_korea
+EBS Kids,id=ebskids_korea
+CGNTV,id=cgntv_korea
