@@ -1,147 +1,139 @@
 var rule = {
-    title:'爱看机器人',
-    host:'https://v.aikanbot.com',
-    homeUrl:'/',
-    url:'/fyclass/page/fypage/',
-    searchUrl:'/search/**/fypage/',
-    searchable:2,
-    quickSearch:1,
-    filterable:0,
-    headers:{
-        'User-Agent':'MOBILE_UA',
-        'Referer':'https://v.aikanbot.com/'
+    title: '爱看机器人',
+    host: 'https://v.aikanbot.com',
+    homeUrl: '/',
+    url: '/fyclass/page/fypage/',
+    searchUrl: '/search/**/fypage/',
+    searchable: 2,
+    quickSearch: 1,
+    filterable: 0,
+    headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36',
+        'Referer': 'https://v.aikanbot.com/'
     },
-    class_name:'电影&电视剧&综艺&动漫&纪录片',
-    class_url:'dianying&dianshiju&zongyi&dongman&jilupian',
-    timeout:5000,
-    play_parse:true,
-    lazy:'',
-    limit:6,
-    double:true,
-    
-    // 首页推荐解析
-    home:function($) {
-        var result = [];
-        $('.module-item').each(function() {
-            var moduleTitle = $(this).find('.module-title').text().trim();
-            var vodList = [];
+    class_name: '电影&电视剧&综艺&动漫&纪录片',
+    class_url: 'dianying&dianshiju&zongyi&dongman&jilupian',
+    timeout: 5000,
+    play_parse: true,
+    lazy: '',
+    limit: 6,
+    double: true,
+
+    // 首页推荐解析优化
+    home: function($) {
+        const result = [];
+        $('.module-items').each(function() { // 修正模块容器选择器
+            const moduleTitle = $(this).prev('h3').text().trim(); // 模块标题可能在前面的h3标签
+            const vodList = [];
             $(this).find('.video-item').each(function() {
-                var vod = {
-                    vod_name: $(this).find('.title').text().trim(),
-                    vod_pic: $(this).find('img').attr('data-original') || $(this).find('img').attr('src'),
-                    vod_remarks: $(this).find('.info').text().trim(),
-                    vod_id: $(this).find('a').attr('href').replace(/.*\/(.*?)\.html/, '\$1')
+                const $this = $(this);
+                const vod = {
+                    vod_name: $this.find('.title').text().trim(),
+                    vod_pic: $this.find('img').attr('data-original') || $this.find('img').attr('src'),
+                    vod_remarks: $this.find('.tags').text().trim(), // 修正备注信息选择器
+                    vod_id: $this.find('a').attr('href').match(/(\d+)\.html$/)[1] // 提取ID更精确
                 };
-                if (!vod.vod_pic.startsWith('http')) {
-                    vod.vod_pic = rule.host + vod.vod_pic;
-                }
+                vod.vod_pic = vod.vod_pic.startsWith('http') ? vod.vod_pic : this.host + vod.vod_pic;
                 vodList.push(vod);
             });
-            result.push({
-                title: moduleTitle,
-                list: vodList
-            });
+            result.push({ title: moduleTitle, list: vodList });
         });
         return result;
     },
-    
-    // 分类页解析
-    list:function($) {
-        var result = [];
-        $('.video-item').each(function() {
-            var vod = {
-                vod_name: $(this).find('.title').text().trim(),
-                vod_pic: $(this).find('img').attr('data-original') || $(this).find('img').attr('src'),
-                vod_remarks: $(this).find('.info').text().trim(),
-                vod_id: $(this).find('a').attr('href').replace(/.*\/(.*?)\.html/, '\$1')
+
+    // 分类页解析优化
+    list: function($) {
+        const result = [];
+        $('.video-list .video-item').each(function() { // 更精确的选择器
+            const $this = $(this);
+            const vod = {
+                vod_name: $this.find('.title').text().trim(),
+                vod_pic: $this.find('img').attr('data-src') || $this.find('img').attr('src'), // 处理懒加载
+                vod_remarks: $this.find('.video-info').text().trim(),
+                vod_id: $this.find('a').attr('href').match(/(\d+)\.html$/)[1]
             };
-            if (!vod.vod_pic.startsWith('http')) {
-                vod.vod_pic = rule.host + vod.vod_pic;
-            }
+            vod.vod_pic = vod.vod_pic.startsWith('http') ? vod.vod_pic : this.host + vod.vod_pic;
             result.push(vod);
         });
         return result;
     },
-    
-    // 详情页解析
-    detail:function($) {
-        var vod = {
+
+    // 详情页解析优化
+    detail: function($) {
+        const $info = $('.video-info-box');
+        const vod = {
             vod_name: $('.video-title').text().trim(),
             vod_pic: $('.video-cover img').attr('src'),
-            vod_year: $('.video-info:contains("年份")').text().replace('年份：', '').trim(),
-            vod_area: $('.video-info:contains("地区")').text().replace('地区：', '').trim(),
-            vod_actor: $('.video-info:contains("主演")').text().replace('主演：', '').trim(),
-            vod_director: $('.video-info:contains("导演")').text().replace('导演：', '').trim(),
-            vod_content: $('.video-desc').text().trim(),
-            vod_play_from: '',
-            vod_play_url: ''
+            vod_year: $info.find('p:contains("年份")').text().split('：')[1] || '',
+            vod_area: $info.find('p:contains("地区")').text().split('：')[1] || '',
+            vod_actor: $info.find('p:contains("主演")').text().split('：')[1] || '',
+            vod_director: $info.find('p:contains("导演")').text().split('：')[1] || '',
+            vod_content: $('.video-intro').text().trim(),
+            vod_play_from: [],
+            vod_play_url: []
         };
-        
-        if (!vod.vod_pic.startsWith('http')) {
-            vod.vod_pic = rule.host + vod.vod_pic;
-        }
-        
-        // 处理播放源
-        var playFrom = [];
-        var playUrl = [];
-        $('.playlist li').each(function() {
-            var sourceName = $(this).find('a').text().trim();
-            var sourceUrl = $(this).find('a').attr('href');
-            playFrom.push(sourceName);
-            playUrl.push(sourceName + '$' + sourceUrl);
+
+        // 处理多播放源
+        $('.playlist-tab li').each(function(i) {
+            const source = $(this).text().trim();
+            vod.vod_play_from.push(source);
+            const urls = [];
+            $($('.playlist-item').eq(i).find('a')).each(function() {
+                urls.push($(this).text().trim() + '$' + $(this).attr('href'));
+            });
+            vod.vod_play_url.push(urls.join('#'));
         });
-        
-        vod.vod_play_from = playFrom.join('$$$');
-        vod.vod_play_url = playUrl.join('$$$');
-        
+        vod.vod_play_from = vod.vod_play_from.join('$$$');
+        vod.vod_play_url = vod.vod_play_url.join('$$$');
+
         return vod;
     },
-    
-    // 搜索解析
-    search:function($) {
-        var result = [];
-        $('.search-item').each(function() {
-            var vod = {
-                vod_name: $(this).find('.title').text().trim(),
-                vod_pic: $(this).find('img').attr('data-original') || $(this).find('img').attr('src'),
-                vod_remarks: $(this).find('.info').text().trim(),
-                vod_id: $(this).find('a').attr('href').replace(/.*\/(.*?)\.html/, '\$1')
+
+    // 搜索解析优化
+    search: function($) {
+        const result = [];
+        $('.search-result-item').each(function() { // 修正选择器
+            const $this = $(this);
+            const vod = {
+                vod_name: $this.find('.video-title').text().trim(),
+                vod_pic: $this.find('img').attr('data-src') || $this.find('img').attr('src'),
+                vod_remarks: $this.find('.video-tag').text().trim(),
+                vod_id: $this.find('a').attr('href').match(/(\d+)\.html$/)[1]
             };
-            if (!vod.vod_pic.startsWith('http')) {
-                vod.vod_pic = rule.host + vod.vod_pic;
-            }
+            vod.vod_pic = vod.vod_pic.startsWith('http') ? vod.vod_pic : this.host + vod.vod_pic;
             result.push(vod);
         });
         return result;
     },
-    
-    // 播放地址解析
-    play:function(html) {
-        var playUrl = '';
-        var script = html.match(/<script.*?player_aaaa.*?<\/script>/);
-        if (script) {
-            var urlMatch = script[0].match(/url:\s*["'](.*?)["']/);
-            if (urlMatch && urlMatch[1]) {
-                playUrl = urlMatch[1];
-                if (!playUrl.startsWith('http')) {
-                    playUrl = rule.host + playUrl;
-                }
+
+    // 播放地址解析增强
+    play: function(html) {
+        let playUrl = '';
+        // 处理多种可能的播放器脚本
+        const regex = /urls*=\s*["'](.*?)["']/;
+        const match = html.match(regex);
+        if (match && match[1]) {
+            playUrl = match[1];
+            if (!playUrl.startsWith('http')) {
+                playUrl = this.host + playUrl;
             }
         }
-        return {
-            parse: 0,
-            url: playUrl,
-            header: rule.headers
-        };
+        // 处理Base64编码地址
+        if (playUrl.startsWith('http') && playUrl.includes('url=')) {
+            const base64Str = playUrl.split('url=')[1];
+            playUrl = Buffer.from(base64Str, 'base64').toString();
+        }
+        return { parse: 0, url: playUrl, header: this.headers };
     },
-    
-    // 自定义预处理
-    before:function(html) {
-        return html.replace(/<script.*?<\/script>/g, '');
+
+    // 增强预处理
+    before: function(html) {
+        // 移除干扰脚本和注释
+        return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                  .replace(/<!--.*?-->/gs, '');
     }
 };
 
-// 导出规则
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = rule;
 }
